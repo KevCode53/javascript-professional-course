@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promises</title>
+</head>
+<body>
+  <a href="./">Go back</a>
+  <ul>
+    <li><button id="sequence">Get Top Anime in Sequence</button></li>
+    <li><button id="parallel">Get Top Anime in Parallel</button></li>
+    <li><button id="fastest">Get Fastest Top Anime</button></li>
+  </ul>
+
+  <div id="animes"></div>
+
+  <script>
+    // The movie Database API: https://anime-db.p.rapidapi.com/anime
+    const apiKey = '43efa01f3fmsh05e55cb0475edc8p1ab4ecjsn8a3da1f8e270'
+    const options = {
+      method: 'GET',
+      headers: {
+        'X-RapidAPI-Key': apiKey,
+        'X-RapidAPI-Host': 'anime-db.p.rapidapi.com'
+      }
+    }
+
+    async function getAnime(id) {
+      const url = `https://anime-db.p.rapidapi.com/anime/by-id/${id}`
+      const response = await fetch(url, options)
+      const data = await response.json()
+      return data
+    }
+
+    async function getPopularAnimes() {
+      const url = `https://anime-db.p.rapidapi.com/anime?page=1&size=10&genres=Fantasy%2CDrama&sortBy=ranking&sortOrder=asc`
+      const response = await fetch(url, options)
+      const data = await response.json()
+      return data.data
+        // .then(response => response.json())
+        // .then(data => {
+        //   // console.log(data.data) 
+        //   return data.data
+        // })
+    }
+
+    async function getTopAnimesId(n = 3) {
+      // return getPopularMovies().then(popularMovies =>
+      // popularMovies.slice(0,n).map(movie => movie.id))
+      // try {
+      //   const popularAnimes = await getPopularAnimes()
+      // } catch (error) {
+      //   console.error(error.message)
+      // }
+      const popularAnimes = await getPopularAnimes()
+      const ids = popularAnimes.slice(0,n).map(anime => anime._id)
+      return ids
+    }
+
+    async function getTopAnimeInSequence(){
+      const ids = await getTopAnimesId()
+      const animes = []
+      for (const id of ids) {
+        const anime = await getAnime(id)
+        animes.push(anime)
+      }
+      return animes
+    }
+
+    async function getTopAnimeInParallel(){
+      const ids = await getTopAnimesId()
+      const animePromise = await ids.map(id => getAnime(id))
+
+      const animes = await Promise.all(animePromise)
+      return animes
+
+    }
+
+    async function getFastestTopAnime(){
+      const ids = await getTopAnimesId()
+      const animePromise = await ids.map(id => getAnime(id))
+
+      const anime = await Promise.race(animePromise)
+      return anime
+    }
+
+    function renderAnimes(animes) {
+      const animeList = document.getElementById('animes');
+      animeList.innerHTML='';
+
+      animes.forEach(anime => {
+        const listItem = document.createElement('li')
+        listItem.innerHTML = `
+          <img src="${anime.image}" />
+          <h5>${anime.title}</h5>
+          <p>${anime.synopsis.substring(0,256)}...</p>
+        `
+      animeList.appendChild(listItem)
+      });
+    }
+
+    document.getElementById('sequence').onclick = async function() {
+      const animes = await getTopAnimeInSequence()
+      renderAnimes(animes)
+    }
+
+    document.getElementById('parallel').onclick = async function() {
+      const animes = await getTopAnimeInParallel()
+      renderAnimes(animes)
+    }
+
+    document.getElementById('fastest').onclick = async function() {
+      const animes = await getFastestTopAnime()
+      renderAnimes([animes])
+    }
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediaPlayer.js</title>
+  <link rel="stylesheet" href="./assets/css/_reset.css">
+  <link rel="stylesheet" href="./assets/css/main.css">
+  <script type="module" src="./assets/js/index.ts" defer></script>
+</head>
+<body>
+  <header class="header">
+    <h1>MediaPlayer.js</h1>
+    <span>An extensible media player</span>
+  </header>
+  <main class="container">
+    <video class="movie">
+      <source src="./assets/video/ControlPedi2.mp4">
+    </video>
+    <div class="controls">
+      <button id="play">Play/Pause</button>
+      <button id="mute">🔊</button>
+    </div>
+    <div class="coments">
+      <h3>Coments</h3>
+      <ul>
+        <li>
+          <div class="coment-contianer">
+            <div class="info">
+              <img src="" alt="">
+              <div class="">
+                <p class="name"></p>
+                <small class="date"></small>
+              </div>
+            </div>
+            <div class="body">
+              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. At repellendus, quis quasi obcaecati cum perspiciatis est accusantium veritatis praesentium dolorem, molestiae inventore provident hic temporibus?</p>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </main>
+  <!-- <script>
+    const video = document.querySelector("video")
+    const button = document.querySelector("button")
+
+    function MediaPlayer(config) {
+      this.media = config.el
+    }
+
+    MediaPlayer.prototype.play = () => {
+      video.play()
+    }
+    MediaPlayer.prototype.pause = () => {
+      video.pause()
+    }
+
+    const player = new MediaPlayer({el:video})
+
+    button.onclick = () => {
+      if (player.media.paused) {
+        player.play()
+      } else {
+        player.pause()
+      }
+    }
+  </script> -->
+</body>
+</html>
